@@ -1,5 +1,8 @@
 package com.example.javafx;
 
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,6 +16,11 @@ import javafx.stage.Stage;
 public class Hello extends Application {
 
     public static void main(String[] args) {
+
+        Twilio.init(
+            System.getenv("ACCOUNT_SID"),
+            System.getenv("AUTH_TOKEN"));
+
         launch(args);
     }
 
@@ -45,8 +53,15 @@ public class Hello extends Application {
         Button sendButton = new Button("Send SMS");
         grid.add(sendButton, 1, 2);
 
-        sendButton.setOnMouseClicked(mouseEvent ->
-            System.out.println("Clicked")
+        sendButton.setOnMouseClicked(mouseEvent -> {
+                Message.creator(
+                    new PhoneNumber(numberField.getText()),
+                    new PhoneNumber("<YOUR TWILIO PHONE NUMBER>"),
+                    messageField.getText())
+                    .create();
+                numberField.setText("");
+                messageField.setText("");
+            }
         );
 
         Scene scene = new Scene(grid, 400, 200);
